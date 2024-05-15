@@ -12,7 +12,7 @@ declare let global: {
   getCourseList: () => Course[] | undefined;
   getCourseIds: () => string[] | undefined;
   getAssignments: () => CourseWork[] | undefined;
-  filterAssignments: (date: Date) => CourseWork[] | undefined;
+  filterAssignmentsByDate: (allAssignments: CourseWork[], date: Date) => CourseWork[] | undefined;
 };
 
 global.getCourseList = () => {
@@ -46,20 +46,13 @@ global.getAssignments = () => {
   return assignments;
 }
 
-global.filterAssignments = (date: Date) => {
-  const allAssignments = global.getAssignments();
-
-  if (allAssignments === undefined) return undefined;
-
+global.filterAssignmentsByDate = (allAssignments: CourseWork[], date: Date) => {
   const assignments = allAssignments.filter((x): x is CourseWork => {
     const d = x.dueDate;
-    const t = x.dueTime;
 
-    if (d === undefined || t === undefined) return false;
-    if (d.year === undefined || d.month === undefined || d.day === undefined) return false;
-    if (t.hours === undefined || t.minutes === undefined || t.seconds === undefined) return false;
+    if (d === undefined || d.year === undefined || d.month === undefined || d.day === undefined) return false;
 
-    const assignmentsDate = new Date(d.year, d.month, d.day, t.hours, t.minutes, t.seconds);
+    const assignmentsDate = new Date(d.year, d.month, d.day);
     if (assignmentsDate < date) return false;
 
     return true;
