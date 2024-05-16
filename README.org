@@ -1,0 +1,11 @@
+#+TITLE: arosa-classroom
+#+AUTHOR: Kyure_A
+#+OPTIONS: toc:nil
+
+** Description
+Classroom api for [[https://github.com/Kyure-A/arosa][arosa]].
+
+** How to deploy
+#+begin_src shell
+deno task deploy
+#+end_src
