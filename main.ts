@@ -2,17 +2,33 @@ import {} from "npm:@types/google-apps-script";
 
 type Course = GoogleAppsScript.Classroom.Schema.Course;
 type CourseWork = GoogleAppsScript.Classroom.Schema.CourseWork;
+type Formatted = {
+  name: string;
+  description: string;
+  dueDate: {
+    year: number;
+    month: number;
+    day: number;
+  } | undefined;
+  link: string;
+};
 
 declare let global: {
-  doGet: (e?: GoogleAppsScript.Events.DoGet) =>
-    | GoogleAppsScript.HTML.HtmlOutput | GoogleAppsScript.Content.TextOutput;
-  doPost: (e?: GoogleAppsScript.Events.DoPost) =>
-    | GoogleAppsScript.HTML.HtmlOutput | GoogleAppsScript.Content.TextOutput;
+  doGet: (
+    e?: GoogleAppsScript.Events.DoGet,
+  ) => GoogleAppsScript.HTML.HtmlOutput | GoogleAppsScript.Content.TextOutput;
+  doPost: (
+    e?: GoogleAppsScript.Events.DoPost,
+  ) => GoogleAppsScript.HTML.HtmlOutput | GoogleAppsScript.Content.TextOutput;
   [key: string]: () => void;
   getCourseList: () => Course[] | undefined;
   getCourseIds: () => string[] | undefined;
   getAssignments: () => CourseWork[] | undefined;
-  filterAssignmentsByDate: (allAssignments: CourseWork[], date: Date) => CourseWork[] | undefined;
+  filterAssignmentsByDate: (
+    allAssignments: CourseWork[],
+    date: Date,
+  ) => CourseWork[] | undefined;
+  formatAssignments: (assignments: CourseWork[]) => Formatted[];
 };
 
 global.getCourseList = () => {
@@ -22,16 +38,18 @@ global.getCourseList = () => {
 
   const list = courses.list().courses;
   return list;
-}
+};
 
 global.getCourseIds = () => {
   const courseList = global.getCourseList();
 
   if (courseList === undefined) return undefined;
 
-  const ids = courseList.map((x) => x.id).filter((x): x is string => x !== undefined);
-  return ids
-}
+  const ids = courseList.map((x) => x.id).filter((x): x is string =>
+    x !== undefined
+  );
+  return ids;
+};
 
 global.getAssignments = () => {
   const ids = global.getCourseIds();
